@@ -54,7 +54,10 @@ cmake-build-release
 
 *.DS_Store  
 build
+build2
 
+glfw
 external/glfwlib
+
 
 */main_ans.cpp
