@@ -117,9 +117,13 @@ void nearest_kdtree(
   // Cull the tree branch whose nodes will not be the minimum distance points.
   // Use the "signed_distance_aabb" function above.
   float dist = signed_distance_aabb(pos_in, x_min, x_max, y_min, y_max);
+  /*
   if (dist > 0){ 
     return;
     }
+    */
+  
+  if (signed_distance_aabb(pos_in, x_min, x_max, y_min, y_max) > (pos_near - pos_in).norm()){ pos_near = pos;}
 
   const Eigen::Vector2f pos = nodes[idx_node].pos;
   if ((pos - pos_in).norm() < (pos_near - pos_in).norm()) { pos_near = pos; } // update the nearest position
