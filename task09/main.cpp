@@ -21,6 +21,8 @@
 #define M_PI 3.14159265358979323846264338327950288
 #endif
 
+int flag = 0;
+
 auto load_my_bunny() {
   auto[tri2vtx, vtx2xyz] = pba::load_wavefront_obj(std::filesystem::path(PATH_SOURCE_DIR) / "bunny_1k.obj");
   { // center-ize
@@ -71,12 +73,16 @@ void step(
     dEdt += penalty*t0;
     dEdo += penalty*vtx2xyz_ini.row(i_vtx_fix).cross(t0.transpose() * rotation);
   }
+
+  std::cout << (vtx2xyz.row(i_vtx_fix) - vtx2xyz_ini.row(i_vtx_fix)) * rotation << std::endl;
+
   for(unsigned int i_vtx=0; i_vtx<vtx2xyz.rows(); ++i_vtx){
     // Write some code below to compute gradient of gravitational potential energy for each vertex
     // Code differentiation of energy w.r.t. translation and rotation for one line each.
     // For the differentiation w.r.t. rotation, observe how the rotation matrix will be updated at the line #83
-    // dEdt +=
-    // dEdo +=
+    dEdt += penalty * (vtx2xyz.row(i_vtx) - vtx2xyz_ini.row(i_vtx)) - gravity.transpose();
+    dEdo += penalty * (vtx2xyz_ini.row(i_vtx)).cross((vtx2xyz.row(i_vtx) - vtx2xyz_ini.row(i_vtx)) * rotation) - gravity.cross(vtx2xyz.row(i_vtx) - vtx2xyz_ini.row(i_vtx)).transpose();
+
     // do not change anything else except for the lines above.
   }
   translation -= learning_rate * dEdt;
